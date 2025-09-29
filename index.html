@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrustWipe Certificate Verification</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    /* Reset & fonts */
     * {
       margin: 0;
       padding: 0;
@@ -24,66 +24,99 @@
 
     .container {
       background: rgba(255, 255, 255, 0.05);
-      padding: 40px;
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      padding: 50px 35px;
+      border-radius: 25px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
       text-align: center;
-      width: 350px;
+      width: 400px;
+      transition: transform 0.3s ease;
+    }
+
+    .container:hover {
+      transform: translateY(-5px);
     }
 
     h1 {
-      margin-bottom: 20px;
-      font-size: 24px;
+      margin-bottom: 25px;
+      font-size: 28px;
       color: #ffcc00;
-      text-shadow: 1px 1px 3px #000;
+      text-shadow: 1px 1px 8px #000;
+      animation: glow 1.5s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00; }
+      to { text-shadow: 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
     }
 
     input {
       width: 100%;
-      padding: 12px 15px;
-      border-radius: 10px;
+      padding: 14px 20px;
+      border-radius: 12px;
       border: none;
       margin-bottom: 20px;
       font-size: 16px;
-    }
-
-    button {
-      padding: 12px 25px;
-      background: #ff6b6b;
-      border: none;
-      border-radius: 10px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      font-size: 16px;
-      cursor: pointer;
       transition: 0.3s;
     }
 
+    input:focus {
+      background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 10px #ffcc00;
+    }
+
+    button {
+      padding: 14px 25px;
+      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.4s;
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+    }
+
     button:hover {
-      background: #ff4757;
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(255, 107, 107, 0.6);
     }
 
     .message {
-      margin-top: 20px;
+      margin-top: 25px;
       font-size: 18px;
-      padding: 10px;
-      border-radius: 10px;
+      font-weight: 600;
+      padding: 15px;
+      border-radius: 15px;
       display: none;
+      animation: fadeIn 0.5s forwards;
+      text-align: center;
     }
 
     .success {
       background: rgba(76, 175, 80, 0.3);
       color: #4caf50;
+      box-shadow: 0 0 15px #4caf50;
     }
 
     .failure {
       background: rgba(244, 67, 54, 0.3);
       color: #f44336;
+      box-shadow: 0 0 15px #f44336;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .footer {
-      margin-top: 25px;
-      font-size: 12px;
+      margin-top: 30px;
+      font-size: 13px;
       color: #aaa;
     }
   </style>
