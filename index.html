@@ -98,12 +98,12 @@
 
     .message {
       margin-top: 25px;
-      font-size: 18px;
+      font-size: 20px;
       font-weight: 600;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
@@ -113,7 +113,7 @@
     }
 
     .tick, .cross {
-      font-size: 50px;
+      font-size: 60px;
       animation: pop 0.5s ease forwards;
     }
 
@@ -157,11 +157,15 @@
       const messageDiv = document.getElementById('message');
       const spinner = document.getElementById('spinner');
 
-      messageDiv.className = 'message';
+      // Reset message
       messageDiv.style.opacity = 0;
       messageDiv.innerHTML = '';
+      messageDiv.classList.remove('show');
+
+      // Show spinner
       spinner.style.display = 'block';
 
+      // Verification simulation delay
       setTimeout(() => {
         spinner.style.display = 'none';
 
