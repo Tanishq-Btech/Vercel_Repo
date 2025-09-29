@@ -18,55 +18,53 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #1c1c1e, #2c3e50);
+      background: #121212;
       color: #fff;
     }
 
     .container {
-      background: rgba(255, 255, 255, 0.05);
+      background: #1e1e2f;
       padding: 50px 40px;
       border-radius: 20px;
-      backdrop-filter: blur(15px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
       text-align: center;
       width: 420px;
-      transition: transform 0.3s ease;
     }
 
     h1 {
       margin-bottom: 30px;
-      font-size: 28px;
-      color: #ffd700;
+      font-size: 26px;
+      color: #00b894;
       letter-spacing: 1px;
-      text-shadow: 0 0 10px #000;
+      font-weight: 600;
     }
 
     input {
       width: 100%;
       padding: 14px 20px;
-      border-radius: 12px;
+      border-radius: 10px;
       border: none;
       margin-bottom: 20px;
       font-size: 16px;
       outline: none;
-      background: rgba(255, 255, 255, 0.1);
+      background: #2a2a3c;
       color: #fff;
-      transition: 0.3s;
+      transition: 0.2s;
     }
 
     input::placeholder {
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(255,255,255,0.5);
     }
 
     input:focus {
-      background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 12px #ffd700;
+      background: #38384d;
+      box-shadow: 0 0 8px #00b894;
     }
 
     button {
       width: 100%;
       padding: 14px 0;
-      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+      background: linear-gradient(90deg, #00b894, #55efc4);
       border: none;
       border-radius: 12px;
       color: #fff;
@@ -74,17 +72,17 @@
       font-weight: 600;
       cursor: pointer;
       transition: 0.3s;
-      box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4);
+      box-shadow: 0 6px 15px rgba(0,184,148,0.4);
     }
 
     button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(255, 126, 95, 0.6);
+      box-shadow: 0 10px 20px rgba(0,184,148,0.5);
     }
 
     .spinner {
       border: 5px solid rgba(255, 255, 255, 0.15);
-      border-top: 5px solid #ffd700;
+      border-top: 5px solid #00b894;
       border-radius: 50%;
       width: 50px;
       height: 50px;
@@ -102,35 +100,41 @@
       margin-top: 25px;
       font-size: 18px;
       font-weight: 600;
-      padding: 15px;
-      border-radius: 12px;
-      display: none;
-      text-align: center;
-      animation: fadeIn 0.5s forwards;
-      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
     }
 
-    .success {
-      background: rgba(76, 175, 80, 0.25);
-      color: #4caf50;
-      box-shadow: 0 0 15px #4caf50;
+    .message.show {
+      opacity: 1;
     }
 
-    .failure {
-      background: rgba(244, 67, 54, 0.25);
-      color: #f44336;
-      box-shadow: 0 0 15px #f44336;
+    .tick, .cross {
+      font-size: 50px;
+      animation: pop 0.5s ease forwards;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .tick {
+      color: #00b894;
+    }
+
+    .cross {
+      color: #d63031;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0); }
+      70% { transform: scale(1.2); }
+      100% { transform: scale(1); }
     }
 
     .footer {
       margin-top: 30px;
       font-size: 13px;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255,255,255,0.5);
     }
   </style>
 </head>
@@ -141,6 +145,7 @@
     <button onclick="verifyCertificate()">Verify</button>
 
     <div class="spinner" id="spinner"></div>
+
     <div id="message" class="message"></div>
 
     <div class="footer">Designed by TrustWipe</div>
@@ -152,21 +157,21 @@
       const messageDiv = document.getElementById('message');
       const spinner = document.getElementById('spinner');
 
-      messageDiv.style.display = 'none';
+      messageDiv.className = 'message';
+      messageDiv.style.opacity = 0;
+      messageDiv.innerHTML = '';
       spinner.style.display = 'block';
 
       setTimeout(() => {
         spinner.style.display = 'none';
 
         if(certInput.toUpperCase().startsWith("CERT")) {
-          messageDiv.textContent = "✅ Verification Successful!";
-          messageDiv.className = "message success";
+          messageDiv.innerHTML = '<span class="tick">✔</span> Verification Successful!';
         } else {
-          messageDiv.textContent = "❌ Verification Failed!";
-          messageDiv.className = "message failure";
+          messageDiv.innerHTML = '<span class="cross">✖</span> Verification Failed!';
         }
 
-        messageDiv.style.display = 'block';
+        messageDiv.classList.add('show');
       }, 2000);
     }
   </script>
