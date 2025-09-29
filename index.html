@@ -1,109 +1,298 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrustWipe Certificate Verification</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TrustWipe — Certificate Verifier</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #111;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
+    :root{
+      --bp-bg:#0f1116;
+      --card:#15181c;
+      --muted:#9aa6b2;
+      --accent:#3fb0ff;
+      --accent-2:#36d1b9;
+      --success:#00c853;
+      --danger:#ff3b30;
+      --glass: rgba(255,255,255,0.03);
+      --radius:14px;
+      --shadow: 0 10px 30px rgba(2,6,23,0.6);
     }
-    .container {
-      background: #1e1e1e;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 0 20px rgba(0, 150, 255, 0.3);
-      width: 420px;
-      text-align: center;
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+    body{
+      background: linear-gradient(135deg,#071223 0%, #0f1b26 60%);
+      color:#e6eef3;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.35;
     }
-    h2 {
-      color: #0A74DA;
-      margin-bottom: 15px;
+
+    /* Card */
+    .panel {
+      width: 520px;
+      max-width:100%;
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.03);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
     }
-    .status {
-      font-size: 22px;
-      font-weight: bold;
-      margin-top: 20px;
+
+    /* Header */
+    .title {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:8px;
     }
-    .verified {
-      color: #00ff88;
+    .logo {
+      width:46px;height:46px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(135deg,var(--accent), #6ad3ff);
+      color:#041019;font-weight:700;font-size:20px;
+      box-shadow: 0 6px 20px rgba(59,151,255,0.14), inset 0 -6px 20px rgba(255,255,255,0.03);
     }
-    .invalid {
-      color: #ff4444;
+    .heading {
+      font-size:18px;font-weight:700;color:#e6f7ff;
     }
-    .details {
-      margin-top: 15px;
-      text-align: left;
-      background: #2b2b2b;
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 14px;
+    .sub {
+      color:var(--muted);font-size:13px;margin-top:4px;margin-bottom:18px;
     }
-    .loading {
-      color: #ffaa00;
-      font-size: 18px;
-      margin-top: 15px;
+
+    /* Form */
+    .row { display:flex; gap:12px; }
+    .field { display:flex; flex-direction:column; margin-bottom:12px; }
+    label { font-size:13px; color:var(--muted); margin-bottom:8px; }
+    input[type="text"]{
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.04);
+      color: #eaf6ff;
+      padding:12px 14px;
+      border-radius:10px;
+      font-size:14px;
+      outline:none;
+      transition: box-shadow .18s, border-color .18s, transform .12s;
+    }
+    input[type="text"]:focus{
+      border-color: rgba(63,176,255,0.95);
+      box-shadow: 0 6px 18px rgba(63,176,255,0.08);
+      transform: translateY(-1px);
+    }
+
+    .controls { display:flex; gap:12px; margin-top:8px; align-items:center; }
+    button.primary {
+      background: linear-gradient(90deg,var(--accent),#2ab7ff);
+      color:#041019;
+      padding:12px 14px;
+      border-radius:10px;
+      border:none;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow: 0 8px 28px rgba(43,167,255,0.12);
+      transition: transform .12s, box-shadow .12s;
+    }
+    button.primary:hover{ transform:translateY(-3px); box-shadow: 0 14px 40px rgba(43,167,255,0.18); }
+
+    button.ghost {
+      background:transparent;
+      color:var(--muted);
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.03);
+      cursor:pointer;
+      transition: all .12s;
+    }
+    button.ghost:hover{ border-color: rgba(255,255,255,0.06); color:#fff; }
+
+    /* Result card */
+    .result {
+      margin-top:18px;
+      padding:14px;
+      border-radius:10px;
+      display:none;
+      align-items:flex-start;
+      gap:12px;
+    }
+    .result.valid {
+      background: linear-gradient(90deg, rgba(0,200,83,0.12), rgba(0,200,83,0.06));
+      border:1px solid rgba(0,200,83,0.12);
+      box-shadow: 0 6px 28px rgba(0,200,83,0.06);
+      color:#eafdf4;
+    }
+    .result.invalid {
+      background: linear-gradient(90deg, rgba(255,71,66,0.12), rgba(255,71,66,0.04));
+      border:1px solid rgba(255,71,66,0.12);
+      box-shadow: 0 6px 28px rgba(255,71,66,0.06);
+      color:#ffecec;
+    }
+
+    .result .left { font-size:22px; font-weight:800; width:44px; color:var(--accent); display:flex; align-items:center; justify-content:center; }
+    .result .meta { flex:1; font-size:13px; color:var(--muted); }
+    .meta b { color:#e8fbff; font-weight:700; }
+
+    .small { font-size:12px; color:var(--muted); margin-top:8px; }
+
+    /* Responsive */
+    @media (max-width:520px){
+      .row{flex-direction:column}
+      .title{gap:10px}
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>🔒 Verification By TrustWipe</h2>
-    <p id="loading" class="loading">Checking certificate...</p>
-    <div id="status"></div>
-    <div id="details" class="details" style="display:none;"></div>
+  <div class="panel" role="main" aria-labelledby="title">
+    <div class="title">
+      <div class="logo">TW</div>
+      <div>
+        <div id="title" class="heading">TrustWipe Verification</div>
+        <div class="sub">Verify certificate authenticity issued by TrustWipe</div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="field">
+      <label for="device">Device ID (auto from server)</label>
+      <input id="device" type="text" placeholder="—" readonly>
+    </div>
+
+    <div class="row">
+      <div class="field" style="flex:1">
+        <label for="operator">Operator</label>
+        <input id="operator" type="text" placeholder="—" readonly>
+      </div>
+      <div class="field" style="width:180px">
+        <label for="timestamp">Timestamp</label>
+        <input id="timestamp" type="text" placeholder="—" readonly>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="cert">Certificate ID</label>
+      <input id="cert" type="text" placeholder="Enter Certificate ID or scan QR (cert_id=...)" autocomplete="off" />
+      <div class="small">Tip: QR can include <code>?cert_id=...</code> to auto-verify.</div>
+    </div>
+
+    <div class="controls">
+      <button class="primary" id="verifyBtn" type="button">Verify Certificate</button>
+      <button class="ghost" id="clearBtn" type="button">Clear</button>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="result" role="status" aria-live="polite">
+      <div class="left" id="resultIcon">✔</div>
+      <div class="meta" id="resultMeta">
+        <div id="resultTitle"><b>Certificate status will appear here</b></div>
+        <div id="resultBody" style="margin-top:8px;"></div>
+      </div>
+    </div>
   </div>
 
   <script>
-    async function verifyCertificate() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const certId = urlParams.get("cert_id");
+    // Configuration: change to your backend endpoint
+    const API_BASE = 'https://dynamoelectric-gunner-nondiagrammatical.ngrok-free.dev';
+    const VERIFY_PATH = '/verify'; // full call: `${API_BASE}${VERIFY_PATH}?cert_id=...`
 
-      if (!certId) {
-        document.getElementById("loading").textContent = "❌ No certificate ID provided.";
-        return;
-      }
+    // Elements
+    const deviceEl = document.getElementById('device');
+    const operatorEl = document.getElementById('operator');
+    const timestampEl = document.getElementById('timestamp');
+    const certEl = document.getElementById('cert');
+    const resultEl = document.getElementById('result');
+    const resultIcon = document.getElementById('resultIcon');
+    const resultTitle = document.getElementById('resultTitle');
+    const resultBody = document.getElementById('resultBody');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
-      try {
-        // 🔥 Replace this with your live ngrok backend link
-        const backendUrl = "https://dynamoelectric-gunner-nondiagrammatical.ngrok-free.dev/verify?cert_id=" + certId;
-
-        const res = await fetch(backendUrl);
-        if (!res.ok) throw new Error("Server error");
-        
-        const data = await res.json();
-
-        document.getElementById("loading").style.display = "none";
-
-        if (data.valid) {
-          document.getElementById("status").innerHTML = "<p class='status verified'>✅ Certificate Verified</p>";
-        } else {
-          document.getElementById("status").innerHTML = "<p class='status invalid'>❌ Certificate Invalid</p>";
-        }
-
-        document.getElementById("details").style.display = "block";
-        document.getElementById("details").innerHTML = `
-          <b>Certificate ID:</b> ${data.cert_id || "N/A"} <br/>
-          <b>Operator:</b> ${data.entry?.operator || "N/A"} <br/>
-          <b>Device:</b> ${data.entry?.target || "N/A"} <br/>
-          <b>Mode:</b> ${data.entry?.mode || "N/A"} <br/>
-          <b>Timestamp:</b> ${data.timestamp || "N/A"}
+    // Helper: show result
+    function showResult(valid, payload) {
+      resultEl.style.display = 'flex';
+      if (valid) {
+        resultEl.className = 'result valid';
+        resultIcon.textContent = '✅';
+        resultTitle.innerHTML = '<b>Certificate is valid</b>';
+        resultBody.innerHTML = `
+          <div><b>Cert ID:</b> ${payload.cert_id || '—'}</div>
+          <div><b>Device:</b> ${payload.entry?.target || '—'}</div>
+          <div><b>Operator:</b> ${payload.entry?.operator || '—'}</div>
+          <div><b>Mode:</b> ${payload.entry?.mode || '—'}</div>
+          <div><b>Timestamp:</b> ${payload.timestamp || '—'}</div>
         `;
-
-      } catch (err) {
-        document.getElementById("loading").style.display = "none";
-        document.getElementById("status").innerHTML = "<p class='status invalid'>❌ Could not verify certificate.</p>";
+      } else {
+        resultEl.className = 'result invalid';
+        resultIcon.textContent = '⛔';
+        resultTitle.innerHTML = '<b>Certificate invalid or not found</b>';
+        resultBody.innerHTML = payload?.message ? `<div>${payload.message}</div>` : `<div>The certificate could not be verified.</div>`;
       }
     }
 
-    verifyCertificate();
+    // Clear UI
+    function clearUI() {
+      deviceEl.value = '';
+      operatorEl.value = '';
+      timestampEl.value = '';
+      certEl.value = '';
+      resultEl.style.display = 'none';
+      resultEl.className = 'result';
+      resultIcon.textContent = '';
+      resultTitle.innerHTML = '';
+      resultBody.innerHTML = '';
+    }
+
+    // Verify function
+    async function verifyCert(certId) {
+      if (!certId) {
+        alert('Please enter a Certificate ID.');
+        return;
+      }
+      // show interim state
+      resultEl.style.display = 'flex';
+      resultEl.className = 'result';
+      resultIcon.textContent = '⏳';
+      resultTitle.innerHTML = '<b>Verifying…</b>';
+      resultBody.innerHTML = 'Contacting TrustWipe verification service...';
+
+      try {
+        const url = `${API_BASE}${VERIFY_PATH}?cert_id=${encodeURIComponent(certId)}`;
+        const resp = await fetch(url, { method: 'GET' });
+        if (!resp.ok) throw new Error('Network response not ok: ' + resp.status);
+        const data = await resp.json();
+
+        if (data?.valid) {
+          // populate fields
+          deviceEl.value = data.entry?.target || '';
+          operatorEl.value = data.entry?.operator || '';
+          timestampEl.value = data.timestamp || '';
+          showResult(true, data);
+        } else {
+          showResult(false, data || { message: 'Not found or invalid' });
+        }
+      } catch (err) {
+        showResult(false, { message: 'Could not reach verification service. ' + err.message });
+        console.error(err);
+      }
+    }
+
+    // Button handlers
+    verifyBtn.addEventListener('click', () => verifyCert(certEl.value.trim()));
+    clearBtn.addEventListener('click', clearUI);
+
+    // Auto-run if cert_id param exists in URL
+    (function autoFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const certId = params.get('cert_id') || params.get('certificate') || params.get('id');
+      if (certId) {
+        certEl.value = certId;
+        // small delay to ensure UI shows verifying state visibly
+        setTimeout(() => verifyCert(certId), 220);
+      }
+    })();
   </script>
 </body>
 </html>
