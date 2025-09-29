@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔐 TrustWipe Certificate Verifier</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0d1117, #161b22);
+      color: #c9d1d9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    h1 {
+      color: #58a6ff;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 28px;
+    }
+
+    .container {
+      background: #161b22;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      width: 400px;
+      max-width: 90%;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+    }
+
+    input {
+      background: #0d1117;
+      color: #c9d1d9;
+      border: 1px solid #30363d;
+    }
+
+    input:focus {
+      border-color: #58a6ff;
+      outline: none;
+      box-shadow: 0 0 8px #58a6ff;
+    }
+
+    button {
+      background: #238636;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
+    }
+
+    button:hover {
+      background: #2ea043;
+      box-shadow: 0 0 12px #2ea043;
+      transform: translateY(-2px);
+    }
+
+    .result {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 10px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+      transition: all 0.3s ease;
+    }
+
+    .valid {
+      background: #1f6feb;
+      color: white;
+      box-shadow: 0 0 15px #1f6feb;
+    }
+
+    .invalid {
+      background: #da3633;
+      color: white;
+      box-shadow: 0 0 15px #da3633;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 TrustWipe Certificate Verifier</h1>
+  <div class="container">
+    <input type="text" id="certId" placeholder="Enter Certificate ID">
+    <button onclick="verifyCert()">Verify</button>
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    async function verifyCert() {
+      const certId = document.getElementById("certId").value.trim();
+      if (!certId) {
+        alert("⚠ Please enter a Certificate ID");
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://dynamoelectric-gunner-nondiagrammatical.ngrok-free.dev/verify?cert_id=${encodeURIComponent(certId)}`);
+        const data = await response.json();
+
+        const resultDiv = document.getElementById("result");
+        resultDiv.style.display = "block";
+
+        if (data.valid) {
+          resultDiv.className = "result valid";
+          resultDiv.innerHTML = `
+            ✅ <b>Certificate is Valid</b><br><br>
+            <b>Cert ID:</b> ${data.cert_id}<br>
+            <b>Device:</b> ${data.entry?.target || "Unknown"}<br>
+            <b>Operator:</b> ${data.entry?.operator || "Unknown"}<br>
+            <b>Mode:</b> ${data.entry?.mode || "Unknown"}<br>
+            <b>Timestamp:</b> ${data.timestamp}
+          `;
+        } else {
+          resultDiv.className = "result invalid";
+          resultDiv.innerHTML = "❌ Certificate not found or invalid!";
+        }
+      } catch (err) {
+        alert("⚠ Could not connect to verification server: " + err);
+      }
+    }
+
+    // Auto-fill from URL if ?cert_id= is present
+    const params = new URLSearchParams(window.location.search);
+    const certIdFromUrl = params.get("cert_id");
+    if (certIdFromUrl) {
+      document.getElementById("certId").value = certIdFromUrl;
+      verifyCert(); // auto-verify
+    }
+  </script>
+</body>
+</html>
