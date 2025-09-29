@@ -6,131 +6,48 @@
   <title>TrustWipe Certificate Verification</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Poppins', sans-serif;
-    }
-
+    * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif; }
     body {
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: #121212;
-      color: #fff;
+      height:100vh; display:flex; justify-content:center; align-items:center;
+      background:#121212; color:#fff;
     }
-
     .container {
-      background: #1e1e2f;
-      padding: 50px 40px;
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.7);
-      text-align: center;
-      width: 420px;
+      background:#1e1e2f; padding:50px 40px; border-radius:20px;
+      box-shadow:0 15px 35px rgba(0,0,0,0.7); text-align:center; width:420px;
     }
-
     h1 {
-      margin-bottom: 30px;
-      font-size: 26px;
-      color: #00b894;
-      letter-spacing: 1px;
-      font-weight: 600;
+      margin-bottom:30px; font-size:26px; color:#00b894; letter-spacing:1px; font-weight:600;
     }
-
     input {
-      width: 100%;
-      padding: 14px 20px;
-      border-radius: 10px;
-      border: none;
-      margin-bottom: 20px;
-      font-size: 16px;
-      outline: none;
-      background: #2a2a3c;
-      color: #fff;
-      transition: 0.2s;
+      width:100%; padding:14px 20px; border-radius:10px; border:none;
+      margin-bottom:20px; font-size:16px; outline:none; background:#2a2a3c; color:#fff;
+      transition:0.2s;
     }
-
-    input::placeholder {
-      color: rgba(255,255,255,0.5);
-    }
-
-    input:focus {
-      background: #38384d;
-      box-shadow: 0 0 8px #00b894;
-    }
-
+    input::placeholder { color: rgba(255,255,255,0.5); }
+    input:focus { background:#38384d; box-shadow:0 0 8px #00b894; }
     button {
-      width: 100%;
-      padding: 14px 0;
-      background: linear-gradient(90deg, #00b894, #55efc4);
-      border: none;
-      border-radius: 12px;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      box-shadow: 0 6px 15px rgba(0,184,148,0.4);
+      width:100%; padding:14px 0; background:linear-gradient(90deg,#00b894,#55efc4);
+      border:none; border-radius:12px; color:#fff; font-size:16px; font-weight:600;
+      cursor:pointer; transition:0.3s; box-shadow:0 6px 15px rgba(0,184,148,0.4);
     }
-
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(0,184,148,0.5);
-    }
-
+    button:hover { transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,184,148,0.5); }
     .spinner {
-      border: 5px solid rgba(255, 255, 255, 0.15);
-      border-top: 5px solid #00b894;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite;
-      margin: 25px auto;
-      display: none;
+      border:5px solid rgba(255,255,255,0.15); border-top:5px solid #00b894;
+      border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite;
+      margin:25px auto; display:none;
     }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
     .message {
-      margin-top: 25px;
-      font-size: 20px;
-      font-weight: 600;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-      opacity: 0;
-      transform: scale(0);
+      margin-top:25px; font-size:20px; font-weight:600; display:flex;
+      justify-content:center; align-items:center; gap:15px; opacity:0; transform:scale(0);
       transition: all 0.5s ease;
     }
-
-    .message.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .tick, .cross {
-      font-size: 60px;
-    }
-
-    .tick {
-      color: #00b894;
-    }
-
-    .cross {
-      color: #d63031;
-    }
-
-    .footer {
-      margin-top: 30px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
-    }
+    .message.show { opacity:1; transform:scale(1); }
+    .tick, .cross { font-size:60px; }
+    .tick { color:#00b894; }
+    .cross { color:#d63031; }
+    .footer { margin-top:30px; font-size:13px; color:rgba(255,255,255,0.5); }
   </style>
 </head>
 <body>
@@ -141,38 +58,57 @@
 
     <div class="spinner" id="spinner"></div>
 
-    <div id="message" class="message"></div>
+    <div class="message" id="message">
+      <span class="tick" id="tick">✔</span>
+      <span class="cross" id="cross">✖</span>
+      <span id="text"></span>
+    </div>
 
     <div class="footer">Designed by TrustWipe</div>
   </div>
 
   <script>
+    const spinner = document.getElementById('spinner');
+    const message = document.getElementById('message');
+    const tick = document.getElementById('tick');
+    const cross = document.getElementById('cross');
+    const text = document.getElementById('text');
+
+    tick.style.display = 'none';
+    cross.style.display = 'none';
+    message.style.opacity = 0;
+
     function verifyCertificate() {
       const certInput = document.getElementById('certId').value.trim();
-      const messageDiv = document.getElementById('message');
-      const spinner = document.getElementById('spinner');
 
-      // Reset message
-      messageDiv.classList.remove('show');
-      messageDiv.innerHTML = '';
+      // Hide previous messages
+      tick.style.display = 'none';
+      cross.style.display = 'none';
+      text.textContent = '';
+      message.style.opacity = 0;
 
       // Show spinner
       spinner.style.display = 'block';
 
-      // Verification delay simulation
       setTimeout(() => {
         spinner.style.display = 'none';
 
         if(certInput.toUpperCase().startsWith("CERT")) {
-          messageDiv.innerHTML = '<span class="tick">✔</span> Verification Successful!';
+          tick.style.display = 'inline';
+          cross.style.display = 'none';
+          text.textContent = "Verification Successful!";
         } else {
-          messageDiv.innerHTML = '<span class="cross">✖</span> Verification Failed!';
+          tick.style.display = 'none';
+          cross.style.display = 'inline';
+          text.textContent = "Verification Failed!";
         }
 
         // Show message with animation
         setTimeout(() => {
-          messageDiv.classList.add('show');
-        }, 50); // small delay to trigger transition
+          message.style.opacity = 1;
+          message.style.transform = 'scale(1)';
+        }, 50);
+
       }, 2000);
     }
   </script>
