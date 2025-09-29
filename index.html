@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TrustWipe Certificate Verification</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -18,31 +18,27 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      background: linear-gradient(135deg, #1c1c1e, #2c3e50);
       color: #fff;
     }
 
     .container {
       background: rgba(255, 255, 255, 0.05);
-      padding: 50px 35px;
-      border-radius: 25px;
+      padding: 50px 40px;
+      border-radius: 20px;
       backdrop-filter: blur(15px);
-      box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
       text-align: center;
-      width: 400px;
+      width: 420px;
+      transition: transform 0.3s ease;
     }
 
     h1 {
-      margin-bottom: 25px;
+      margin-bottom: 30px;
       font-size: 28px;
-      color: #ffcc00;
-      text-shadow: 1px 1px 8px #000;
-      animation: glow 1.5s infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00; }
-      to { text-shadow: 0 0 20px #ffcc00, 0 0 30px #ffcc00; }
+      color: #ffd700;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #000;
     }
 
     input {
@@ -55,40 +51,45 @@
       outline: none;
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
-      transition: 0.2s;
+      transition: 0.3s;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.6);
     }
 
     input:focus {
       background: rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 10px #ffcc00;
+      box-shadow: 0 0 12px #ffd700;
     }
 
     button {
-      padding: 14px 25px;
-      background: linear-gradient(45deg, #ff6b6b, #ff4757);
+      width: 100%;
+      padding: 14px 0;
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
       border: none;
       border-radius: 12px;
       color: #fff;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+      transition: 0.3s;
+      box-shadow: 0 8px 20px rgba(255, 126, 95, 0.4);
     }
 
     button:hover {
-      transform: scale(1.03);
-      box-shadow: 0 8px 18px rgba(255, 107, 107, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(255, 126, 95, 0.6);
     }
 
     .spinner {
-      border: 5px solid rgba(255, 255, 255, 0.2);
-      border-top: 5px solid #ffcc00;
+      border: 5px solid rgba(255, 255, 255, 0.15);
+      border-top: 5px solid #ffd700;
       border-radius: 50%;
       width: 50px;
       height: 50px;
       animation: spin 1s linear infinite;
-      margin: 20px auto;
+      margin: 25px auto;
       display: none;
     }
 
@@ -102,20 +103,21 @@
       font-size: 18px;
       font-weight: 600;
       padding: 15px;
-      border-radius: 15px;
+      border-radius: 12px;
       display: none;
       text-align: center;
       animation: fadeIn 0.5s forwards;
+      letter-spacing: 0.5px;
     }
 
     .success {
-      background: rgba(76, 175, 80, 0.3);
+      background: rgba(76, 175, 80, 0.25);
       color: #4caf50;
       box-shadow: 0 0 15px #4caf50;
     }
 
     .failure {
-      background: rgba(244, 67, 54, 0.3);
+      background: rgba(244, 67, 54, 0.25);
       color: #f44336;
       box-shadow: 0 0 15px #f44336;
     }
@@ -128,7 +130,7 @@
     .footer {
       margin-top: 30px;
       font-size: 13px;
-      color: #aaa;
+      color: rgba(255,255,255,0.6);
     }
   </style>
 </head>
@@ -150,13 +152,9 @@
       const messageDiv = document.getElementById('message');
       const spinner = document.getElementById('spinner');
 
-      // Hide message first
       messageDiv.style.display = 'none';
-
-      // Show spinner
       spinner.style.display = 'block';
 
-      // Simulate verification delay (2 seconds)
       setTimeout(() => {
         spinner.style.display = 'none';
 
