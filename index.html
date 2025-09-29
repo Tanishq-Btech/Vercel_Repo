@@ -105,16 +105,17 @@
       align-items: center;
       gap: 15px;
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transform: scale(0);
+      transition: all 0.5s ease;
     }
 
     .message.show {
       opacity: 1;
+      transform: scale(1);
     }
 
     .tick, .cross {
       font-size: 60px;
-      animation: pop 0.5s ease forwards;
     }
 
     .tick {
@@ -123,12 +124,6 @@
 
     .cross {
       color: #d63031;
-    }
-
-    @keyframes pop {
-      0% { transform: scale(0); }
-      70% { transform: scale(1.2); }
-      100% { transform: scale(1); }
     }
 
     .footer {
@@ -158,14 +153,13 @@
       const spinner = document.getElementById('spinner');
 
       // Reset message
-      messageDiv.style.opacity = 0;
-      messageDiv.innerHTML = '';
       messageDiv.classList.remove('show');
+      messageDiv.innerHTML = '';
 
       // Show spinner
       spinner.style.display = 'block';
 
-      // Verification simulation delay
+      // Verification delay simulation
       setTimeout(() => {
         spinner.style.display = 'none';
 
@@ -175,7 +169,10 @@
           messageDiv.innerHTML = '<span class="cross">✖</span> Verification Failed!';
         }
 
-        messageDiv.classList.add('show');
+        // Show message with animation
+        setTimeout(() => {
+          messageDiv.classList.add('show');
+        }, 50); // small delay to trigger transition
       }, 2000);
     }
   </script>
